@@ -1,4 +1,4 @@
-
+export const CONTRACT_ADDRESS = "0x4C571EBc5aC28dC19Eb69eEadDB0bCCA34Af3c69";
 
 export const CONTRACT_ABI = [
   "constructor(string[] _candidateNames)",

@@ -1,121 +1,56 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { useVoting } from "./hooks/useVoting";
+import ConnectWallet from "./components/ConnectWallet";
+import StatusBanner from "./components/StatusBanner";
+import AdminPanel from "./components/AdminPanel";
+import VoterPanel from "./components/VoterPanel";
+import ResultsPanel from "./components/ResultsPanel";
+import "./App.css";
 
-function App() {
-  const [count, setCount] = useState(0)
+export default function App() {
+  const {
+    account, candidates, votingOpen, isOwner, isVoter, hasVoted,
+    loading, error, txHash, connectWallet, addVoter, startVoting, vote
+  } = useVoting();
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <div className="app">
+      <header>
+        <h1>🗳️ DApp Vote</h1>
+        <ConnectWallet account={account} onConnect={connectWallet} />
+      </header>
 
-      <div className="ticks"></div>
+      {error && <div className="error-msg">❌ {error}</div>}
+      {txHash && <div className="tx-msg">✅ Transaction : {txHash.slice(0, 20)}...</div>}
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+      {account && (
+        <>
+          <StatusBanner votingOpen={votingOpen} isOwner={isOwner} isVoter={isVoter} />
+          {isOwner && (
+            <AdminPanel
+              votingOpen={votingOpen}
+              onAddVoter={addVoter}
+              onStartVoting={startVoting}
+              loading={loading}
+            />
+          )}
+          {isVoter && (
+            <VoterPanel
+              candidates={candidates}
+              votingOpen={votingOpen}
+              hasVoted={hasVoted}
+              onVote={vote}
+              loading={loading}
+            />
+          )}
+          <ResultsPanel candidates={candidates} />
+        </>
+      )}
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+      {!account && (
+        <div className="welcome">
+          <p>Connectez votre wallet MetaMask pour participer au vote.</p>
+        </div>
+      )}
+    </div>
+  );
 }
-
-export default App

@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 import { BrowserProvider, Contract } from "ethers";
-import { CONTRACT_ADDRESS, CONTRACT_ABI } from "../constants/contract";
+import { CONTRACT_ADDRESS, CONTRACT_ABI } from "../constants/contract.js";
 
 export function useVoting() {
   const [provider, setProvider] = useState(null);
