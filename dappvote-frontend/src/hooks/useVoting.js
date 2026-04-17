@@ -64,7 +64,6 @@ export function useVoting() {
 
       await refresh(_contract, _account);
 
-      // Ecoute les events
       _contract.on("VoterAdded", () => refresh(_contract, _account));
       _contract.on("VotingStarted", () => refresh(_contract, _account));
       _contract.on("VoteCast", () => refresh(_contract, _account));
